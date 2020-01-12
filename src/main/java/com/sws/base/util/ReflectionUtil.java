@@ -56,6 +56,22 @@ public class ReflectionUtil {
     }
 
 
+
+    public static Field[] getSuperClassFields(Class<?> clazz) {
+        Class<?> superClazz = clazz.getSuperclass();
+        if (superClazz != null) {
+            Field[] superFields = superClazz.getDeclaredFields();
+            Field[] superClassFields = getSuperClassFields(superClazz);
+
+            Field[] c = new Field[superFields.length + superClassFields.length];
+            System.arraycopy(superFields, 0, c, 0, superFields.length);
+            System.arraycopy(superClassFields, 0, c, superFields.length, superClassFields.length);
+
+            return c;
+        }
+        Field[] f = new Field[0];
+        return f;
+    }
     /**
      * 强制获取字段值
      *
