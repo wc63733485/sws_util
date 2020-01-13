@@ -10,7 +10,16 @@ import java.sql.SQLException;
 public class Test {
 
     public static void main(String[] args) throws Exception {
+        PumpHouse be = new PumpHouse();
+        be.setAddress("123");
+        be.setCreateTime("123");
 
+        BaseDao bd = new BaseDao();
+        try {
+            bd.queryByPage(be,0,2);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

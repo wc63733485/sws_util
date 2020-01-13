@@ -1,28 +1,20 @@
 package com.sws.base.dao;
 
-import com.sws.base.util.FieldUtil;
-import com.sws.base.util.TableUtil;
+import com.sws.base.util.SqlUtil;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class BaseDao {
 
     /**
-     * 插入模板
-     */
-    private static final String INSERT_FORMAT = "INSERT INTO %s ( %s ) VALUES ( %s ) ;";
-
-    /**
-     * 保存用户信息
+     * 保存信息
      *
      * @param obj
      * @throws SQLException
      */
     public void save(Object obj) throws SQLException {
-        String sql = BaseInsert(obj);
+        SqlUtil sqlUtil = new SqlUtil();
+        String sql = sqlUtil.BaseInsert(obj);
         System.out.println(sql);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");    //com.mysql.jdbc.Driver已经弃用了，要加上cj
@@ -36,30 +28,48 @@ public class BaseDao {
     }
 
 //    /**
-//     * 构建插入语句
+//     * 查询信息
 //     *
 //     * @param obj
-//     * @return
+//     * @throws SQLException
 //     */
-//    public String buildInsertSQL(Object obj) {
-//        String tableName = TableUtil.getTableName(obj);
-//        String fieldString = FieldUtil.getFieldNameString(obj);
-//        String valueString = FieldUtil.getFieldValueString(obj);
-//
-//        return String.format(INSERT_FORMAT, tableName, fieldString, valueString);
+//    public void query(Object obj) throws SQLException {
+//        SqlUtil sqlUtil = new SqlUtil();
+//        String sql = sqlUtil.BaseQuery(obj);
+//        System.out.println(sql);
+//        try {
+//            Class.forName("com.mysql.cj.jdbc.Driver");    //com.mysql.jdbc.Driver已经弃用了，要加上cj
+//            Connection con = DriverManager.getConnection("jdbc:mysql://39.96.74.32:3306/hssws?useSSL=true&characterEncoding=utf-8&serverTimezone=GMT", "root", "ASDzxc1993.");
+//            PreparedStatement state = (PreparedStatement) con.prepareStatement(sql);
+//            state.execute();
+//            con.close();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
 //    }
 
     /**
-     * 构建插入语句
+     * 查询信息
      *
      * @param obj
-     * @return
+     * @throws SQLException
      */
-    public String BaseInsert(Object obj) {
-        String tableName = TableUtil.getTableName(obj);
-        String fieldString = FieldUtil.getFieldNameString(obj);
-        String valueString = FieldUtil.getFieldValueString(obj);
+    public void queryByPage(Object obj, int page, int limit) throws SQLException {
+        SqlUtil sqlUtil = new SqlUtil();
+        String sql = null;
 
-        return String.format(INSERT_FORMAT, tableName, fieldString, valueString);
+        sql = sqlUtil.BaseQuery(obj, 0, 5);
+
+        System.out.println(sql);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");    //com.mysql.jdbc.Driver已经弃用了，要加上cj
+            Connection con = DriverManager.getConnection("jdbc:mysql://39.96.74.32:3306/hssws?useSSL=true&characterEncoding=utf-8&serverTimezone=GMT", "root", "ASDzxc1993.");
+            PreparedStatement state = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet resultSet = state.executeQuery();
+            resultSet.next();
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
