@@ -8,8 +8,8 @@ import java.lang.annotation.Annotation;
 /**
  * 列表工具类
  *
- * @author houbinbin
- * @date 16/6/5
+ * @author wxc
+ * @date 20/1/14
  */
 public class TableUtil {
     private TableUtil() {

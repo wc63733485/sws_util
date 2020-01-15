@@ -1,10 +1,7 @@
 package com.sws.base.util;
 
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ReflectionUtil {
 

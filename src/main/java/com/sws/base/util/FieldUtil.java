@@ -1,30 +1,15 @@
 package com.sws.base.util;
 
-
-import com.sws.base.Entity.PumpHouse;
 import com.sws.base.annotations.Column;
 import com.sws.base.annotations.GenerateValue;
 import com.sws.base.annotations.Id;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.sws.base.util.ReflectionUtil.*;
 
 public class FieldUtil {
-    /**
-     * 获取对应SQL字段类型
-     *
-     * @param field
-     * @return
-     */
-    public static String getSqlType(Field field) {
-        return TypeMap.getTypeMap().get(field.getType().getTypeName());
-    }
-
 
     /**
      * 获取字段注解信息
@@ -136,7 +121,7 @@ public class FieldUtil {
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
-                if ("java.lang.String".equals(field.getType())) {
+                if (java.lang.String.class.equals(field.getType()) && null!=o) {
                     o = "'" + o + "'";
                 }
                 arrayList.add(String.valueOf(o));
@@ -149,7 +134,7 @@ public class FieldUtil {
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
-                if ("java.lang.String".equals(field.getType().getTypeName())) {
+                if (java.lang.String.class.equals(field.getType()) && null!=o) {
                     o = "'" + o + "'";
                 }
                 arrayList.add(String.valueOf(o));
@@ -168,32 +153,34 @@ public class FieldUtil {
         Field[] superClassFields = getSuperClassFields(clazz);
 
         for (Field field : declaredFields) {
+            String annotationKey = getFieldColumnAnnotation(field);
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
                 if (null==o) {
                     continue;
                 }
-                if ("java.lang.String".equals(field.getType())) {
+                if (java.lang.String.class.equals(field.getType()) && null!=o) {
                     o = "'" + o + "'";
                 }
-                arrayList.add(field.getName()+"="+String.valueOf(o));
+                arrayList.add(annotationKey + "=" + String.valueOf(o));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
 
         for (Field field : superClassFields) {
+            String annotationKey = getFieldColumnAnnotation(field);
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
                 if (null==o) {
                     continue;
                 }
-                if ("java.lang.String".equals(field.getType().getTypeName())) {
+                if (java.lang.String.class.equals(field.getType()) && null!=o) {
                     o = "'" + o + "'";
                 }
-                arrayList.add(field.getName()+"="+String.valueOf(o));
+                arrayList.add(annotationKey + "=" + String.valueOf(o));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

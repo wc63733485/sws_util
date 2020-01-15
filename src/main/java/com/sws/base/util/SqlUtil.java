@@ -1,12 +1,5 @@
 package com.sws.base.util;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static com.sws.base.util.ReflectionUtil.getFieldList;
-
 public class SqlUtil {
 
     /**
@@ -18,6 +11,11 @@ public class SqlUtil {
      * 查询模板
      */
     private static final String SELECT_FORMAT = "SELECT * FROM %s WHERE %s LIMIT %s,%s ;";
+
+    /**
+     * 删除模板
+     */
+    private static final String DELETE_FORMAT = "DELETE FROM %s WHERE %s;";
 
     /**
      * 构建插入语句
@@ -33,15 +31,27 @@ public class SqlUtil {
     }
 
     /**
-     * 构建插入语句
+     * 构建查询语句
      *
      * @param obj
      * @return
      */
     public String BaseQuery(Object obj,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
-
-        String s = StringUtil.concatCollection2Str(FieldUtil.getNotNullFiledString(obj));
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj));
         return String.format(SELECT_FORMAT, tableName, s, page, limit);
+    }
+
+
+    /**
+     * 构建删除语句
+     *
+     * @param obj
+     * @return
+     */
+    public String BaseDelete(Object obj) {
+        String tableName = TableUtil.getTableName(obj);
+        String s = StringUtil.concatCollection2StrEquals(FieldUtil.getNotNullFiledString(obj));
+        return String.format(DELETE_FORMAT, tableName, s);
     }
 }
