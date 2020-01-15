@@ -8,6 +8,8 @@ spring:
     password: ASDzxc1993.
   jpa:
     show-sql: true
+log:
+  level: error
 eureka:
   client:
     service-url:
