@@ -1,5 +1,7 @@
 package com.sws.base.service;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
 
 public interface BaseService {
@@ -7,12 +9,12 @@ public interface BaseService {
     /**
      * 查询所有列表
      */
-    List<?> findAllByPage(int page, int limit, String sort, int type);
+    List<JSONObject> findAllByPage(int page, int limit, String sort, int type);
 
     /**
      * 根据条件分页查询
      */
-    List<?> findAllByPage(Object t,int page,int limit,String sort,int type);
+    List<JSONObject> findAllByPage(Object t,int page,int limit,String sort,int type);
 
     /**
      * 根据id查询某条数据
