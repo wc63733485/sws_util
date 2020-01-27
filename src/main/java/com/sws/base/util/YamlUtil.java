@@ -1,7 +1,8 @@
 package com.sws.base.util;
 
-import com.sun.deploy.resources.ResourceManager;
 import org.yaml.snakeyaml.Yaml;
+import sun.net.ResourceManager;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +11,13 @@ public class YamlUtil {
 
     private static String bootstrap_file = "bootstrap.yml";
     private static String application_file = "application.yml";
-    private static Map<String,Object> result = new HashMap<>();
+    private static Map<String,Object> result = new HashMap<String,Object>();
     /**
      * 根据文件名获取yml的文件内容
      * @return
      */
     public static Map<String,Object> getYmlByFileName(String file){
-        result = new HashMap<>();
+        result = new HashMap<String,Object>();
         if(file == null)
             file = bootstrap_file;
         InputStream in = ResourceManager.class.getClassLoader().getResourceAsStream(file);

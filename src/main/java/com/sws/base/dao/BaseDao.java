@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.sws.base.util.SqlUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaseDao {
 
@@ -56,8 +58,8 @@ public class BaseDao {
      * @param obj
      * @throws SQLException
      */
-    public JSONArray queryByPage(Object obj, int page, int limit) throws SQLException {
-        JSONArray array = new JSONArray();
+    public List<JSONObject> queryByPage(Object obj, int page, int limit) throws SQLException {
+        List<JSONObject> array = new ArrayList<JSONObject>();
         SqlUtil sqlUtil = new SqlUtil();
         String sql = sqlUtil.BaseQuery(obj, 0, 5);
 
