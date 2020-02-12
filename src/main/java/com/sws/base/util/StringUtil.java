@@ -1,6 +1,7 @@
 package com.sws.base.util;
 
 import java.util.Collection;
+import java.util.List;
 
 public class StringUtil {
     /**
@@ -16,7 +17,7 @@ public class StringUtil {
     /**
      * 默认连接符
      */
-    public static final String CONNECTEREQUALS = "=";
+    public static final String CONNECTERLIKE = " LIKE ";
 
     /**
      * 空字符串
@@ -90,26 +91,4 @@ public class StringUtil {
         return stringBuilder.toString();
     }
 
-
-    /**
-     * Collection<String>,根据连接符转成字符串.
-     * 注意：如set 是无序的。。。
-     *
-     * @param collection
-     * @param connector  //连接符默认为"and"
-     * @return
-     */
-    public static String concatCollection2StrEquals(Collection<String> collection, String... connector) {
-
-        String conn = isEmpty(connector) ? StringUtil.CONNECTEREQUALS : connector[0];
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String str : collection) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(conn);
-            }
-            stringBuilder.append(str);
-        }
-
-        return stringBuilder.toString();
-    }
 }

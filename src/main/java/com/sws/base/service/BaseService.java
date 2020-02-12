@@ -1,6 +1,6 @@
 package com.sws.base.service;
 
-import com.alibaba.fastjson.JSONObject;
+import com.sws.base.Entity.PageUtil;
 
 import java.util.List;
 
@@ -9,12 +9,17 @@ public interface BaseService {
     /**
      * 查询所有列表
      */
-    List<JSONObject> findAllByPage(int page, int limit, String sort, int type);
+    List<Object> findAllByPage(int page, int limit, String sort, int type);
 
     /**
      * 根据条件分页查询
      */
-    List<JSONObject> findAllByPage(Object t,int page,int limit,String sort,int type);
+    PageUtil findAllByPage(Object t, int page, int limit,boolean vague);
+
+    /**
+     * 根据条件分页查询
+     */
+    PageUtil findAllByPage(Object t,int page,int limit,String sort,int type);
 
     /**
      * 根据id查询某条数据
@@ -24,7 +29,7 @@ public interface BaseService {
     /**
      * 根据条件查询
      */
-    List<?> findListByCondition(Object t);
+    List<?> findListByCondition(Object t,boolean vague);
 
     /**
      * 根据id更新

@@ -3,6 +3,7 @@ package com.sws.base.util;
 import com.sws.base.annotations.Column;
 import com.sws.base.annotations.GenerateValue;
 import com.sws.base.annotations.Id;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -104,7 +105,7 @@ public class FieldUtil {
     }
 
     /**
-     * 获取字段名称字符串
+     * 获取字段名称字符串(不判断实体属性值是否为空)
      *
      * @param t
      * @param <T>
@@ -117,24 +118,17 @@ public class FieldUtil {
         Field[] declaredFields = clazz.getDeclaredFields();
         Field[] superClassFields = getSuperClassFields(clazz);
 
-        for (Field field : declaredFields) {
-            field.setAccessible(true);
-            try {
-                Object o = field.get(t);
-                if (java.lang.String.class.equals(field.getType()) && null!=o) {
-                    o = "'" + o + "'";
-                }
-                arrayList.add(String.valueOf(o));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        getFileds(arrayList, t, declaredFields);
+        getFileds(arrayList, t, superClassFields);
+        return arrayList;
+    }
 
-        for (Field field : superClassFields) {
+    public static <T> List getFileds(ArrayList arrayList, T t, Field[] Fields) {
+        for (Field field : Fields) {
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
-                if (java.lang.String.class.equals(field.getType()) && null!=o) {
+                if (java.lang.String.class.equals(field.getType()) && null != o) {
                     o = "'" + o + "'";
                 }
                 arrayList.add(String.valueOf(o));
@@ -145,22 +139,41 @@ public class FieldUtil {
         return arrayList;
     }
 
-    public static <T> List getNotNullFiledString(T t) {
+    /**
+     * 获取字段名称字符串(判断实体属性值是否为空)
+     * true  构建模糊查询string
+     * flase  构建普通查询
+     *
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public static <T> List getNotNullFiledString(T t, boolean bo) {
         ArrayList arrayList = new ArrayList();
-
         Class clazz = t.getClass();
         Field[] declaredFields = clazz.getDeclaredFields();
         Field[] superClassFields = getSuperClassFields(clazz);
+        if (bo) {
+            getNotNullFiledsVague(arrayList, t, declaredFields);
+            getNotNullFiledsVague(arrayList, t, superClassFields);
+        } else {
+            getNotNullFileds(arrayList, t, declaredFields);
+            getNotNullFileds(arrayList, t, superClassFields);
+        }
+        return arrayList;
+    }
 
-        for (Field field : declaredFields) {
+    public static <T> List getNotNullFileds(ArrayList arrayList, T t, Field[] Fields) {
+
+        for (Field field : Fields) {
             String annotationKey = getFieldColumnAnnotation(field);
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
-                if (null==o) {
+                if (null == o) {
                     continue;
                 }
-                if (java.lang.String.class.equals(field.getType()) && null!=o) {
+                if (java.lang.String.class.equals(field.getType())) {
                     o = "'" + o + "'";
                 }
                 arrayList.add(annotationKey + "=" + String.valueOf(o));
@@ -168,19 +181,23 @@ public class FieldUtil {
                 e.printStackTrace();
             }
         }
+        return arrayList;
+    }
 
-        for (Field field : superClassFields) {
+    public static <T> List getNotNullFiledsVague(ArrayList arrayList, T t, Field[] Fields) {
+
+        for (Field field : Fields) {
             String annotationKey = getFieldColumnAnnotation(field);
             field.setAccessible(true);
             try {
                 Object o = field.get(t);
-                if (null==o) {
+                if (null == o) {
                     continue;
                 }
-                if (java.lang.String.class.equals(field.getType()) && null!=o) {
-                    o = "'" + o + "'";
-                }
-                arrayList.add(annotationKey + "=" + String.valueOf(o));
+//                if (java.lang.String.class.equals(field.getType())) {
+                o = "'%" + o + "%'";
+//                }
+                arrayList.add(annotationKey + " like " + String.valueOf(o));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
