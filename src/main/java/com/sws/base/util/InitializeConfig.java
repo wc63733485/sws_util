@@ -23,7 +23,7 @@ public class InitializeConfig {
 
     public static JSONObject getConfig() {
 
-        URL systemResource = ClassLoader.getSystemResource("bootstrap.yml");
+        URL systemResource = InitializeConfig.class.getResource("bootstrap.yml");
         Map load = null;
         try {
             load = yaml.load(new FileInputStream(systemResource.getFile()));
