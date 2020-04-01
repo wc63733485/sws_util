@@ -3,6 +3,7 @@ package com.sws.base.util;
 import com.sws.base.annotations.Column;
 import com.sws.base.annotations.GenerateValue;
 import com.sws.base.annotations.Id;
+import com.sws.base.annotations.IgnoreColumn;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -20,11 +21,13 @@ public class FieldUtil {
      */
     public static String getFieldColumnAnnotation(Field field) {
         Annotation annotation = getAnnotation(field, Column.class);
-
         if (annotation != null) {
             return ((Column) annotation).value();
         }
-
+        Annotation annotationIgnore = getAnnotation(field, IgnoreColumn.class);
+        if (annotationIgnore!= null){
+            return null;
+        }
         return field.getName();
     }
 
@@ -94,11 +97,17 @@ public class FieldUtil {
 
         for (Field field : declaredFields) {
             String annotationKey = getFieldColumnAnnotation(field);
+            if (annotationKey==null){
+                continue;
+            }
             arrayList.add(annotationKey);
         }
 
         for (Field field : superClassFields) {
             String annotationKey = getFieldColumnAnnotation(field);
+            if (annotationKey==null){
+                continue;
+            }
             arrayList.add(annotationKey);
         }
         return arrayList;
@@ -130,6 +139,10 @@ public class FieldUtil {
                 Object o = field.get(t);
                 if (java.lang.String.class.equals(field.getType()) && null != o) {
                     o = "'" + o + "'";
+                }
+                Annotation annotationIgnore = getAnnotation(field, IgnoreColumn.class);
+                if (annotationIgnore!= null){
+                    continue;
                 }
                 arrayList.add(String.valueOf(o));
             } catch (IllegalAccessException e) {
@@ -204,4 +217,71 @@ public class FieldUtil {
         }
         return arrayList;
     }
+
+    /**
+     * 获取字段名称字符串(判断实体属性值是否为空)
+     * true  构建模糊查询string
+     * flase  构建普通查询
+     *
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public static <T> List getNotNullFiledStringNoEqual(T t, boolean bo) {
+        ArrayList arrayList = new ArrayList();
+        Class clazz = t.getClass();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        Field[] superClassFields = getSuperClassFields(clazz);
+        if (bo) {
+            getNotNullFiledsVagueNoEqual(arrayList, t, declaredFields);
+            getNotNullFiledsVagueNoEqual(arrayList, t, superClassFields);
+        } else {
+            getNotNullFiledsNoEqual(arrayList, t, declaredFields);
+            getNotNullFiledsNoEqual(arrayList, t, superClassFields);
+        }
+        return arrayList;
+    }
+
+    public static <T> List getNotNullFiledsNoEqual(ArrayList arrayList, T t, Field[] Fields) {
+
+        for (Field field : Fields) {
+            String annotationKey = getFieldColumnAnnotation(field);
+            field.setAccessible(true);
+            try {
+                Object o = field.get(t);
+                if (null == o) {
+                    continue;
+                }
+                if (java.lang.String.class.equals(field.getType())) {
+                    o = "'" + o + "'";
+                }
+                arrayList.add(annotationKey + "!=" + String.valueOf(o));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return arrayList;
+    }
+
+    public static <T> List getNotNullFiledsVagueNoEqual(ArrayList arrayList, T t, Field[] Fields) {
+
+        for (Field field : Fields) {
+            String annotationKey = getFieldColumnAnnotation(field);
+            field.setAccessible(true);
+            try {
+                Object o = field.get(t);
+                if (null == o) {
+                    continue;
+                }
+//                if (java.lang.String.class.equals(field.getType())) {
+                o = "'%" + o + "%'";
+//                }
+                arrayList.add(annotationKey + " not like " + String.valueOf(o));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return arrayList;
+    }
+
 }

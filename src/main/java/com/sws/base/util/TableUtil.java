@@ -35,4 +35,25 @@ public class TableUtil {
 
         return tableName;
     }
+
+    /**
+     * 获取表名称
+     *
+     * @param t
+     * @param <T>
+     * @return 表名称
+     */
+    public static <T> String getTableNameClass(T t) {
+        Annotation annotation = ReflectionUtil.getAnnotation(t, Entity.class);
+
+        String tableName = ReflectionUtil.getClassName(t);
+
+        if (annotation != null) {
+            Entity entity = (Entity) annotation;
+            String tableValue = entity.value();
+            tableName = StringUtil.isEmpty(tableValue) ? tableName : tableValue;
+        }
+
+        return tableName;
+    }
 }
