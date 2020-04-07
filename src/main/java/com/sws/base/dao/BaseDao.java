@@ -5,12 +5,14 @@ import com.sws.base.connectPool.ConnectionPool;
 import com.sws.base.connectPool.ConnectionPoolUtils;
 import com.sws.base.util.JavaBeanUtil;
 import com.sws.base.util.SqlUtil;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@Repository
 public class BaseDao {
 
     private static ConnectionPool connPool = ConnectionPoolUtils.GetPoolInstance();//单例模式创建连接池对象

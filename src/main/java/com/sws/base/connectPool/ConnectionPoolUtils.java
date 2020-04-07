@@ -1,13 +1,10 @@
 package com.sws.base.connectPool;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sws.base.util.InitializeConfig;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class ConnectionPoolUtils {
-
-    private static JSONObject config = InitializeConfig.getConfig();
 
 
     private ConnectionPoolUtils() {
@@ -18,10 +15,10 @@ public class ConnectionPoolUtils {
     public static ConnectionPool GetPoolInstance() {
         if (poolInstance == null) {
             try {
-                poolInstance = new ConnectionPool(config.getJSONObject("mysql").getString("driverClassName"),
-                        config.getJSONObject("mysql").getString("url"),
-                        config.getJSONObject("mysql").getString("username"),
-                        config.getJSONObject("mysql").getString("password"));
+                poolInstance = new ConnectionPool("com.mysql.cj.jdbc.Driver",
+                        "jdbc:mysql://39.96.74.32:25412/hssws?allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false",
+                        "root",
+                        "ASDzxc1993.");
                 poolInstance.createPool();
             } catch (Exception e) {
                 e.printStackTrace();
