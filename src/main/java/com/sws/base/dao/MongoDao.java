@@ -8,10 +8,10 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.sws.base.util.InitializeConfig;
 import com.sws.base.util.JavaBeanUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.stereotype.Repository;
 
 
 import java.util.ArrayList;
@@ -22,17 +22,16 @@ import java.util.List;
  * @author wxc
  * @version Beta2.0
  */
+@Repository
 public class MongoDao {
 
-    private static JSONObject config = InitializeConfig.getConfig();
+    private String dbName = "device";
 
-    private String dbName = config.getJSONObject("mongodb").getString("dbName");
+    private String[] uri = {"39.96.74.32:27837"};
 
-    private String[] uri = config.getJSONObject("mongodb").getJSONArray("uri").toArray(new String[0]);
+    private String username = "root";
 
-    private String username = config.getJSONObject("mongodb").getString("username");;
-
-    private String password = config.getJSONObject("mongodb").getString("password");;
+    private String password = "ASDzxc1993";
 
     public void setMongoClient(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
@@ -52,8 +51,8 @@ public class MongoDao {
         options.threadsAllowedToBlockForConnectionMultiplier(5000);// 线程队列数，如果连接线程排满了队列就会抛出“Out of semaphores to get db”错误。
         options.writeConcern(WriteConcern.SAFE);//
         MongoClientOptions build = options.build();
-        MongoCredential mongoCredential = MongoCredential.createCredential(username,"admin",password.toCharArray());
-        MongoClient mongoClient = new MongoClient(listHost,mongoCredential,build);
+        MongoCredential mongoCredential = MongoCredential.createCredential(username, "admin", password.toCharArray());
+        MongoClient mongoClient = new MongoClient(listHost, mongoCredential, build);
         this.mongoClient = mongoClient;
     }
 
@@ -135,13 +134,14 @@ public class MongoDao {
         FindIterable<Document> documents = coll.find(bson).sort(doc).limit(1);
 
         Document first = documents.first();
-
-        JSONObject jsonObject = JSONObject.parseObject(first.toJson());
-
+        JSONObject jsonObject = new JSONObject();
+        if (first!=null) {
+            jsonObject = JSONObject.parseObject(first.toJson());
+        }
         return jsonObject;
     }
 
-    public JSONObject findRowByField(String field, String collectionName,int limit) {
+    public JSONObject findRowByField(String field, String collectionName, int limit) {
 
         MongoCollection<Document> coll = getCollection(dbName, collectionName);
 
@@ -155,24 +155,24 @@ public class MongoDao {
         JSONArray arrayData = new JSONArray();
         JSONArray arrayTime = new JSONArray();
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Document next = iterator.next();
             arrayTime.add(next.get("time"));
             arrayData.add(next.get(field));
         }
-        r.put("time",arrayTime);
-        r.put("data",arrayData);
+        r.put("time", arrayTime);
+        r.put("data", arrayData);
         return r;
     }
 
-    public JSONObject findRowByField(String field, String collectionName,long startTime) {
+    public JSONObject findRowByField(String field, String collectionName, long startTime) {
 
         MongoCollection<Document> coll = getCollection(dbName, collectionName);
 
         BasicDBObject bson = new BasicDBObject();
         BasicDBObject gte = new BasicDBObject();
-        gte.put("$gt",startTime);
-        bson.put("time",gte);
+        gte.put("$gt", startTime);
+        bson.put("time", gte);
 
         Document doc = new Document();
         doc.put("time", -1);
@@ -182,15 +182,16 @@ public class MongoDao {
         JSONObject r = new JSONObject();
         JSONArray arrayData = new JSONArray();
         JSONArray arrayTime = new JSONArray();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Document next = iterator.next();
             arrayTime.add(next.get("time"));
             arrayData.add(next.get(field));
         }
-        r.put("time",arrayTime);
-        r.put("data",arrayData);
+        r.put("time", arrayTime);
+        r.put("data", arrayData);
         return r;
     }
+
     public Document findById(String collectionName, String id) {
 
         MongoCollection<Document> coll = getCollection(dbName, collectionName);
@@ -209,7 +210,7 @@ public class MongoDao {
 
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return myDoc;

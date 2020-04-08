@@ -2,12 +2,13 @@ package com.sws.base.service.impl;
 
 import com.sws.base.dao.BaseDao;
 import com.sws.base.service.BaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class BaseServiceImpl implements BaseService {
 
-
+    @Autowired
     private BaseDao bd = new BaseDao();
 
     public List<Object> findAllByPage(int page, int limit, String sort, int type) {
