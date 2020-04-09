@@ -1,6 +1,7 @@
 package com.sws.base.dao;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.*;
@@ -9,7 +10,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.sws.base.util.JavaBeanUtil;
-import org.bson.Document;
+import org.bson.*;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
@@ -118,6 +120,38 @@ public class MongoDao {
         T t = (T) JavaBeanUtil.mapToObject(myDoc, obj);
         return t;
     }
+
+
+    public JSONObject find(String dbName,String collectionName,JSONObject jso,JSONObject jsosort,int page,int limit) {
+
+        MongoCollection<Document> coll = getCollection(dbName,collectionName);
+
+        Document myDoc = null;
+
+        try {
+
+            BasicDBObject find = new BasicDBObject();
+            BasicDBObject sort = new BasicDBObject();
+            sort.putAll(jsosort);
+
+            find.putAll(jso);
+
+            FindIterable<Document> documents = coll.find(find).sort(sort).skip((page-1)*limit).limit(limit);
+
+            if (documents == null) {
+
+                return new JSONObject();
+
+            }
+            return JSON.parseObject(documents.toString());
+        } catch (IllegalArgumentException e) {
+
+            throw new IllegalArgumentException(e);
+
+        }
+
+    }
+
 
     public JSONObject findOneByNew(JSONObject obj, String collectionName) {
 
