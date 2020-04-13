@@ -1,5 +1,4 @@
 import com.sws.base.Entity.BaseEntity;
-import com.sws.base.dao.BaseDao;
 
 import java.sql.SQLException;
 

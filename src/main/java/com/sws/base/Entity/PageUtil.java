@@ -1,6 +1,5 @@
 package com.sws.base.Entity;
 
-import com.sws.base.dao.BaseDao;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,7 @@ public class PageUtil extends HashMap {
 
     private static final long serialVersionUID = 1L;
 
-    private static final BaseDao bd = new BaseDao();
+//    private static final BaseDao bd = new BaseDao();
 
     public List<?> data;
 
