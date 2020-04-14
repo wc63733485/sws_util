@@ -4,6 +4,9 @@ import com.sws.base.annotations.Entity;
 
 public class SqlUtil {
 
+    private final String DESC = "DESC";
+    private final String ASC = "ASC";
+
     /**
      * 插入模板
      */
@@ -12,7 +15,7 @@ public class SqlUtil {
     /**
      * 查询模板
      */
-    private static final String SELECT_FORMAT = "SELECT * FROM %s WHERE %s LIMIT %s,%s;";
+    private static final String SELECT_FORMAT = "SELECT * FROM %s WHERE %s ORDER BY %s %s LIMIT %s,%s;";
 
 
     /**
@@ -23,12 +26,12 @@ public class SqlUtil {
     /**
      * 查询模板
      */
-    private static final String SELECTALL_FORMAT = "SELECT * FROM %s;";
+    private static final String SELECTALL_FORMAT = "SELECT * FROM %s ORDER BY %s %s;";
 
     /**
      * 查询模板不分页
      */
-    private static final String SELECT_FORMAT_NOPAGE = "SELECT * FROM %s WHERE %s;";
+    private static final String SELECT_FORMAT_NOPAGE = "SELECT * FROM %s WHERE %s ORDER BY %s %s;;";
 
     /**
      * 删除模板
@@ -44,6 +47,21 @@ public class SqlUtil {
      * 更新模板
      */
     private static final String UPDATE_FORMAT = "UPDATE %s SET %s WHERE %s;";
+
+    /**
+     * 构建插入语句
+     *
+     * @param i
+     * @return
+     */
+    public String sort(int i) {
+        if (i==1){
+            return ASC;
+        }else{
+            return DESC;
+        }
+    }
+
 
     /**
      * 构建插入语句
@@ -64,10 +82,10 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQuery(Object obj,int page,int limit,boolean vague) {
+    public String BaseQuery(Object obj,int page,int limit,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
-        return String.format(SELECT_FORMAT, tableName, s, page, limit);
+        return String.format(SELECT_FORMAT, tableName, s,sort,sort(i), page, limit);
     }
 
     /**
@@ -84,10 +102,10 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQueryNoPage(Object obj,boolean vague) {
+    public String BaseQueryNoPage(Object obj,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
-        return String.format(SELECT_FORMAT_NOPAGE, tableName, s);
+        return String.format(SELECT_FORMAT_NOPAGE, tableName, s,sort,sort(i));
     }
 
     /**
@@ -96,10 +114,10 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQueryNoEqualNoPage(Object obj,boolean vague) {
+    public String BaseQueryNoEqualNoPage(Object obj,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj,vague));
-        return String.format(SELECT_FORMAT_NOPAGE, tableName, s);
+        return String.format(SELECT_FORMAT_NOPAGE, tableName, s,sort,sort(i));
     }
 
     /**
@@ -108,10 +126,10 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQueryOr(Object obj,int page,int limit,boolean vague) {
+    public String BaseQueryOr(Object obj,int page,int limit,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
-        return String.format(SELECT_FORMAT, tableName, s, page, limit);
+        return String.format(SELECT_FORMAT, tableName, s,sort,sort(i), page, limit);
     }
 
     /**
@@ -132,10 +150,10 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQueryNoPageOr(Object obj,boolean vague) {
+    public String BaseQueryNoPageOr(Object obj,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
-        return String.format(SELECT_FORMAT_NOPAGE, tableName, s);
+        return String.format(SELECT_FORMAT_NOPAGE, tableName, s,sort,sort(i));
     }
 
 
@@ -146,9 +164,9 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQueryAll(Object obj) {
+    public String BaseQueryAll(Object obj,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
-        return String.format(SELECTALL_FORMAT, tableName);
+        return String.format(SELECTALL_FORMAT, tableName,sort,sort(i));
     }
 
     /**
