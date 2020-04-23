@@ -2,11 +2,13 @@ package com.sws.base.util;
 
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 public class TimeUtil {
@@ -535,6 +537,68 @@ public class TimeUtil {
         }
         return res;
     }
+
+    private static long day = 1000 * 60 * 60 * 24;
+    //日期字符串的格式
+    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 返回前一天的 00:00:00 字符串格式
+     *
+     * @return
+     */
+    public static String getLastDayStart() {
+        return format.format(getTodayStartMills() - day);
+    }
+
+    /**
+     * 返回前一天的 23:59:59 字符串格式
+     *
+     * @return
+     */
+    public static String getLastDayEnd() {
+        return format.format(getTodayStartMills() - 1);
+    }
+
+    /**
+     * 返回当日的 00:00:00 字符串格式
+     *
+     * @return
+     */
+    public static String getTodayStart() {
+        long zero = getTodayStartMills();
+        return format.format(zero);
+    }
+
+    /**
+     * 返回当日的 23:59:59 字符串格式
+     *
+     * @return
+     */
+    public static String getTodayEnd() {
+        return format.format(getTodayStartMills() + day - 1);
+    }
+
+    /**
+     * 返回当日的 00:00:00 毫秒格式
+     *
+     * @return
+     */
+    public static long getTodayStartMills() {
+        long current = System.currentTimeMillis();
+        long zero = ( (current + TimeZone.getDefault().getRawOffset())/ day * day ) - TimeZone.getDefault().getRawOffset();
+        return zero;
+    }
+
+    /**
+     * 返回前一天的 00:00:00 毫秒格式
+     *
+     * @return
+     */
+    public static long getLastDayStartMills() {
+        return getTodayStartMills() - day;
+    }
+
 
     public static void main(String[] args) {
 
