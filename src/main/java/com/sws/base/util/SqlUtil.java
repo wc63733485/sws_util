@@ -2,6 +2,8 @@ package com.sws.base.util;
 
 import com.sws.base.annotations.Entity;
 
+import java.util.List;
+
 public class SqlUtil {
 
     private final String DESC = "DESC";
@@ -31,7 +33,7 @@ public class SqlUtil {
     /**
      * 查询模板不分页
      */
-    private static final String SELECT_FORMAT_NOPAGE = "SELECT * FROM %s WHERE %s ORDER BY %s %s;;";
+    private static final String SELECT_FORMAT_NOPAGE = "SELECT * FROM %s WHERE %s ORDER BY %s %s;";
 
     /**
      * 删除模板
@@ -47,6 +49,11 @@ public class SqlUtil {
      * 更新模板
      */
     private static final String UPDATE_FORMAT = "UPDATE %s SET %s WHERE %s;";
+
+    /**
+     * 包含查询模板
+     */
+    private static final String SELECT_IN = "select * from %s where id in (%s)";
 
     /**
      * 构建插入语句
@@ -106,6 +113,21 @@ public class SqlUtil {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_FORMAT_NOPAGE, tableName, s,sort,sort(i));
+    }
+
+    /**
+     * 构建查询语句（不分页）
+     *
+     * @param obj
+     * @return
+     */
+    public String BaseQueryIn(Object obj, List array) {
+        String tableName = TableUtil.getTableName(obj);
+        String s = StringUtil.concatCollection2Str(array);
+        if (array.size()==0){
+            return "SELECT * FROM "+tableName;
+        }
+        return String.format(SELECT_IN, tableName, s);
     }
 
     /**
