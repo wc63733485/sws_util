@@ -125,7 +125,7 @@ public class SqlUtil {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2Str(array);
         if (array.size()==0){
-            return "SELECT * FROM "+tableName;
+            return "select * from device_unit where id = 0";
         }
         return String.format(SELECT_IN, tableName, s);
     }
