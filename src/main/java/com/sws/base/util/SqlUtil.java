@@ -17,6 +17,11 @@ public class SqlUtil {
     /**
      * 查询模板
      */
+    private static final String SELECT_ONE_FORMAT = "SELECT * FROM %s WHERE %s;";
+
+    /**
+     * 查询模板
+     */
     private static final String SELECT_FORMAT = "SELECT * FROM %s WHERE %s ORDER BY %s %s LIMIT %s,%s;";
 
 
@@ -81,6 +86,18 @@ public class SqlUtil {
         String s = StringUtil.concatCollection2Str(FieldUtil.getFields(obj));
         String v = StringUtil.concatCollection2Str(FieldUtil.getFieldsValues(obj));
         return String.format(INSERT_FORMAT, tableName, s, v);
+    }
+
+    /**
+     * 构建查询语句
+     *
+     * @param obj
+     * @return
+     */
+    public String BaseQuery(Object obj) {
+        String tableName = TableUtil.getTableName(obj);
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,false));
+        return String.format(SELECT_ONE_FORMAT, tableName,s);
     }
 
     /**
@@ -160,9 +177,21 @@ public class SqlUtil {
      * @param obj
      * @return
      */
-    public String BaseQueryOrCount(Object obj,boolean vague) {
+    public String OrCount(Object obj,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
+        return String.format(COUNT_FORMAT, tableName, s);
+    }
+
+    /**
+     * 查询符合条件的个数的语句
+     *
+     * @param obj
+     * @return
+     */
+    public String AndCount(Object obj,boolean vague) {
+        String tableName = TableUtil.getTableName(obj);
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(COUNT_FORMAT, tableName, s);
     }
 
@@ -203,17 +232,6 @@ public class SqlUtil {
         return String.format(DELETE_FORMAT, tableName, s);
     }
 
-    /**
-     * 查询符合条件的个数的语句
-     *
-     * @param obj
-     * @return
-     */
-    public String Count(Object obj,boolean vague) {
-        String tableName = TableUtil.getTableName(obj);
-        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
-        return String.format(COUNT_FORMAT, tableName, s);
-    }
 
     /**
      * 查询符合条件的个数的语句

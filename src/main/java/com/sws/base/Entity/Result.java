@@ -24,6 +24,9 @@ public class Result extends HashMap {
         r.put("msg", msg);
         return r;
     }
+    public static Result ok() {
+        return new Result();
+    }
 
     public static Result ok(String msg) {
         Result r = new Result();
@@ -31,35 +34,18 @@ public class Result extends HashMap {
         return r;
     }
 
-    public static Result data(String msg,Object obj,int count) {
+    public static Result ok(String msg,Object obj) {
+        Result r = new Result();
+        r.put("msg", msg);
+        r.put("data", obj);
+        return r;
+    }
+
+    public static Result ok(String msg,Object obj,int count) {
         Result r = new Result();
         r.put("msg", msg);
         r.put("data", obj);
         r.put("count", count);
         return r;
     }
-
-    public static Result data(String msg,Object obj) {
-        Result r = new Result();
-        r.put("msg", msg);
-        r.put("data", obj);
-        return r;
-    }
-
-
-    public static Result ok(Map<String, Object> map) {
-        Result r = new Result();
-        r.putAll(map);
-        return r;
-    }
-
-    public static Result ok() {
-        return new Result();
-    }
-
-    public Result put(String key, Object value) {
-        super.put(key, value);
-        return this;
-    }
-
 }
