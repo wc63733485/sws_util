@@ -1,13 +1,15 @@
 package com.sws.base.Entity;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Result extends HashMap {
+public class Result extends JSONObject {
     private static final long serialVersionUID = 1L;
 
     public Result() {
-        put("code", 0);
+        put("code", 200);
     }
 
     public static Result error() {
