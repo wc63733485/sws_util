@@ -30,7 +30,7 @@ public class BaseDao {
         return jdbcTemplate.update(sql) > 0;
     }
 
-    public <T> List<T> query(Object obj, Class<T> clazz, int page, int limit, boolean vague, String sort, int i) {
+    public <T> List<T> query(Object obj, Class<T> clazz, boolean vague, int page, int limit, String sort, int i) {
         String sql = sqlUtil.queryPageSort(obj, vague, (page - 1) * limit, limit, sort, i);
         return this.getResult(clazz, sql);
     }
@@ -87,18 +87,27 @@ public class BaseDao {
 
     public <T> T queryById(Integer id, Class<T> clazz) {
         String tn = clazz.getAnnotation(Entity.class).value();
-        ;
         String sql = sqlUtil.queryById(tn, id);
-        return JavaBeanUtil.mapToObject(jdbcTemplate.queryForMap(sql), clazz);
+        return JavaBeanUtil.mapToObject(jdbcTemplate.queryForList(sql).get(0), clazz);
     }
 
     public <T> T queryOne(Object obj, Class<T> clazz) {
-        T t = (T) new Object();
-        String sql = sqlUtil.queryPage(obj, false, 1, 1);
-        Map<String, Object> stringObjectMap = jdbcTemplate.queryForMap(sql);
-        if (stringObjectMap.size() > 0) {
-            return (T)JavaBeanUtil.mapToObject(jdbcTemplate.queryForMap(sql), clazz);
+        String sql = sqlUtil.queryPage(obj, false, 0, 1);
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
+        System.out.println(sql);
+        if (maps.size() == 1) {
+            System.out.println(maps.get(0).toString());
+            return JavaBeanUtil.mapToObject(maps.get(0), clazz);
         }
-        return t;
+        return null;
+    }
+
+    public <T> T queryOne(Object obj, Class<T> clazz, String sort, int i) {
+        String sql = sqlUtil.queryPageSort(obj, false, 0, 1, sort, i);
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
+        if (maps.size() == 1) {
+            return JavaBeanUtil.mapToObject(maps.get(0), clazz);
+        }
+        return null;
     }
 }
