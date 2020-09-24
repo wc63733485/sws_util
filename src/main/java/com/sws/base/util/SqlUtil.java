@@ -6,8 +6,8 @@ import java.util.List;
 
 public class SqlUtil {
 
-    private final String DESC = "DESC";
-    private final String ASC = "ASC";
+    private static final String DESC = "DESC";
+    private static final String ASC = "ASC";
 
     private static final String INSERT_FORMAT = "INSERT INTO %s ( %s ) VALUES ( %s );";
 
@@ -20,6 +20,8 @@ public class SqlUtil {
     private static final String SELECT_PAGE_FORMAT = "SELECT * FROM %s WHERE %s LIMIT %s,%s;";
 
     private static final String SELECT_FORMAT = "SELECT * FROM %s WHERE %s;";
+    
+    private static final String SELECT_FORMAT_FIELD = "SELECT * FROM %s WHERE %s = %s;";
 
     private static final String SELECT_ALL_SORT_PAGE_FORMAT = "SELECT * FROM %s ORDER BY %s %s LIMIT %s,%s;";
 
@@ -37,7 +39,7 @@ public class SqlUtil {
 
     private static final String SELECT_IN = "SELECT * FROM %s WHERE %s in (%s)";
 
-    public String sort(int i) {
+     public static String sort(int i) {
         if (i==1){
             return ASC;
         }else{
@@ -45,53 +47,62 @@ public class SqlUtil {
         }
     }
 
-    public String insert(Object obj) {
+     public static String insert(Object obj) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2Str(FieldUtil.getFields(obj));
         String v = StringUtil.concatCollection2Str(FieldUtil.getFieldsValues(obj));
         return String.format(INSERT_FORMAT, tableName, s, v);
     }
 
-    public String query(Object obj) {
+     public static String queryByFiled(String tableName,String columnField,Object queryField) {
+        return String.format(SELECT_FORMAT_FIELD, tableName,columnField,queryField);
+    }
+
+     public static String query(Object obj) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,false));
         return String.format(SELECT_FORMAT, tableName,s);
     }
-    public String queryPageSort(Object obj,boolean vague,int page,int limit,String sort,int i) {
+
+     public static String queryPageSort(Object obj,boolean vague,int page,int limit,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s,sort,sort(i), page, limit);
     }
-    public String queryPage(Object obj,boolean vague,int page,int limit) {
+
+     public static String queryPage(Object obj,boolean vague,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_PAGE_FORMAT, tableName,s, page, limit);
     }
-    public String querySort(Object obj,String sort,int i,boolean vague) {
+
+     public static String querySort(Object obj,String sort,int i,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_SORT_FORMAT,s, tableName, sort, sort(i));
     }
 
-    public String queryById(String name,Integer id) {
+     public static String queryById(String name,Integer id) {
         return String.format(SELECT_ID_FORMAT, name, id);
     }
 
-    public String queryAll(String tableName) {
+     public static String queryAll(String tableName) {
         return String.format(SELECT_ALL_FORMAT, tableName);
     }
-    public String queryAllPage(String tableName,int page,int limit) {
+
+     public static String queryAllPage(String tableName,int page,int limit) {
         return String.format(SELECT_ALL_PAGE_FORMAT, tableName, page,limit);
     }
-    public String queryAllSort(String tableName,String sort,int i) {
+
+     public static String queryAllSort(String tableName,String sort,int i) {
         return String.format(SELECT_ALL_SORT_FORMAT, tableName,sort,sort(i));
     }
-    public String queryAllSortPage(String tableName,String sort,int i,int page,int limit) {
+
+     public static String queryAllSortPage(String tableName,String sort,int i,int page,int limit) {
         return String.format(SELECT_ALL_SORT_PAGE_FORMAT, tableName,sort,sort(i),page,limit);
     }
 
-    public String queryIn(Object obj, String Field,List array) {
-        String tableName = TableUtil.getTableName(obj);
+     public static String queryIn(String tableName, String Field,List array) {
         if (array.size()==0){
             return "SELECT * FROM"+tableName+"WHERE 1=2";
         }
@@ -99,66 +110,71 @@ public class SqlUtil {
         return String.format(SELECT_IN, tableName,Field, s);
     }
 
-    public String queryNoEqSortPage(Object obj,boolean vague,int page,int limit,String sort,int i) {
+     public static String queryNoEqSortPage(Object obj,boolean vague,int page,int limit,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj,vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s,sort,sort(i),page,limit);
     }
-    public String queryNoEqualPage(Object obj,boolean vague,int page,int limit) {
+
+     public static String queryNoEqualPage(Object obj,boolean vague,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj,vague));
         return String.format(SELECT_PAGE_FORMAT, tableName, s,page,limit);
     }
-    public String queryNoEqualSort(Object obj,boolean vague,String sort,int i) {
+
+     public static String queryNoEqualSort(Object obj,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj,vague));
         return String.format(SELECT_SORT_FORMAT, tableName, s,sort,sort(i));
     }
-    public String queryNoEqual(Object obj,boolean vague) {
+
+     public static String queryNoEqual(Object obj,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj,vague));
         return String.format(SELECT_FORMAT, tableName, s);
     }
 
-    public String queryOrSortPage(Object obj,boolean vague,int page,int limit,String sort,int i) {
+     public static String queryOrSortPage(Object obj,boolean vague,int page,int limit,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s,sort,sort(i),page, limit);
     }
-    public String queryOrPage(Object obj,boolean vague,int page,int limit) {
+
+     public static String queryOrPage(Object obj,boolean vague,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_PAGE_FORMAT, tableName, s, page, limit);
     }
-    public String queryOrSort(Object obj,boolean vague,String sort,int i) {
+     public static String queryOrSort(Object obj,boolean vague,String sort,int i) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_SORT_FORMAT, tableName, s,sort,sort(i));
     }
-    public String queryOr(Object obj,boolean vague) {
+
+     public static String queryOr(Object obj,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_FORMAT, tableName, s);
     }
 
-    public String orCount(Object obj,boolean vague) {
+     public static String orCount(Object obj,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(COUNT_FORMAT, tableName, s);
     }
-    public String andCount(Object obj,boolean vague) {
+     public static String andCount(Object obj,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(COUNT_FORMAT, tableName, s);
     }
 
-    public String delete(Object obj) {
+     public static String delete(Object obj) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,false));
         return String.format(DELETE_FORMAT, tableName, s);
     }
 
-    public String update(Object obj1,Object obj2) {
+     public static String update(Object obj1,Object obj2) {
         String tableName = TableUtil.getTableName(obj1);
         String s1 = StringUtil.concatCollection2Str(FieldUtil.getNotNullFiledString(obj1,false));
         String s2 = StringUtil.concatCollection2Str(FieldUtil.getNotNullFiledString(obj2,false));
