@@ -35,6 +35,8 @@ public class SqlUtil {
 
     private static final String COUNT_FORMAT = "SELECT COUNT(*) FROM %s WHERE %s;";
 
+    private static final String COUNT_ALL_FORMAT = "SELECT COUNT(*) FROM %s;";
+
     private static final String UPDATE_FORMAT = "UPDATE %s SET %s WHERE %s;";
 
     private static final String SELECT_IN = "SELECT * FROM %s WHERE %s in (%s)";
@@ -64,7 +66,7 @@ public class SqlUtil {
         return String.format(SELECT_FORMAT, tableName,s);
     }
 
-     public static String queryPageSort(Object obj,boolean vague,int page,int limit,String sort,int i) {
+     public static String querySortPage(Object obj,boolean vague,String sort,int i,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s,sort,sort(i), page, limit);
@@ -110,7 +112,7 @@ public class SqlUtil {
         return String.format(SELECT_IN, tableName,Field, s);
     }
 
-     public static String queryNoEqSortPage(Object obj,boolean vague,int page,int limit,String sort,int i) {
+     public static String queryNoEqSortPage(Object obj,boolean vague,String sort,int i,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj,vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s,sort,sort(i),page,limit);
@@ -134,7 +136,7 @@ public class SqlUtil {
         return String.format(SELECT_FORMAT, tableName, s);
     }
 
-     public static String queryOrSortPage(Object obj,boolean vague,int page,int limit,String sort,int i) {
+     public static String queryOrSortPage(Object obj,boolean vague,String sort,int i,int page,int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s,sort,sort(i),page, limit);
@@ -166,6 +168,9 @@ public class SqlUtil {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj,vague));
         return String.format(COUNT_FORMAT, tableName, s);
+    }
+    public static String countAll(String tableName) {
+        return String.format(COUNT_ALL_FORMAT, tableName);
     }
 
      public static String delete(Object obj) {
