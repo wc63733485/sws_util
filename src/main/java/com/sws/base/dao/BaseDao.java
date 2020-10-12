@@ -72,6 +72,12 @@ public class BaseDao {
 //        return this.getResult(clazz, sql);
 //    }
 
+    public <T> List<T> queryAll(Class<T> clazz) {
+        String tn = clazz.getAnnotation(Entity.class).value();
+        String sql = SqlUtil.queryAll(tn);
+        return this.getResult(clazz, sql);
+    }
+
     public <T> List<T> queryAllSortPage(Class<T> clazz, String sort, int i, int page, int limit) {
         String tn = clazz.getAnnotation(Entity.class).value();
         String sql = SqlUtil.queryAllSortPage(tn, sort, 1, (page - 1) * limit, limit);
