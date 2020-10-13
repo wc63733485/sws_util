@@ -27,6 +27,11 @@ public class BaseDao {
         return jdbcTemplate.update(sql) > 0;
     }
 
+    public <T> List<T> query(Object obj, Class<T> clazz) {
+        String sql = SqlUtil.query(obj);
+        return this.getResult(clazz, sql);
+    }
+
     public <T> List<T> querySortPage(Object obj, Class<T> clazz, boolean vague, String sort, int i, int page, int limit) {
         String sql = SqlUtil.querySortPage(obj, vague, sort, i, (page - 1) * limit, limit);
         return this.getResult(clazz, sql);
@@ -75,6 +80,12 @@ public class BaseDao {
     public <T> List<T> queryAll(Class<T> clazz) {
         String tn = clazz.getAnnotation(Entity.class).value();
         String sql = SqlUtil.queryAll(tn);
+        return this.getResult(clazz, sql);
+    }
+
+    public <T> List<T> queryAllSort(Class<T> clazz,String sort, int i) {
+        String tn = clazz.getAnnotation(Entity.class).value();
+        String sql = SqlUtil.queryAllSort(tn,sort,i);
         return this.getResult(clazz, sql);
     }
 
