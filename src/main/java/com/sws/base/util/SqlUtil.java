@@ -173,7 +173,11 @@ public class SqlUtil {
     public static String andCount(Object obj, boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
-        return String.format(COUNT_FORMAT, tableName, s);
+        if (s.equals("")) {
+            return String.format(COUNT_ALL_FORMAT, tableName);
+        }else{
+            return String.format(COUNT_FORMAT, tableName, s);
+        }
     }
 
     public static String countAll(String tableName) {
