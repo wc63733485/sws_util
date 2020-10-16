@@ -340,6 +340,18 @@ public class TimeUtil {
      * @param date
      * @return
      */
+    public static String formatDate2(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String result = null;
+        result = sdf.format(date);
+        return result;
+    }
+    /**
+     * 日期转字符串
+     *
+     * @param date
+     * @return
+     */
     public static String formatDate(Date date, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         String result = null;
