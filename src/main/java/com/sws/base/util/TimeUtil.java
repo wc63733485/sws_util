@@ -346,6 +346,20 @@ public class TimeUtil {
         result = sdf.format(date);
         return result;
     }
+
+    /**
+     * 日期转字符串
+     *
+     * @param date
+     * @return
+     */
+    public static String formatDate3(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        String result = null;
+        result = sdf.format(date);
+        return result;
+    }
+
     /**
      * 日期转字符串
      *
