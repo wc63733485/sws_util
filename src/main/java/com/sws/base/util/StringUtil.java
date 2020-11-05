@@ -68,6 +68,8 @@ public class StringUtil {
         return stringBuilder.toString();
     }
 
+
+
     /**
      * Collection<String>,根据连接符转成字符串.
      * 注意：如set 是无序的。。。

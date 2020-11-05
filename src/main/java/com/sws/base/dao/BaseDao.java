@@ -96,11 +96,15 @@ public class BaseDao {
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryIn(String tableName, Class<T> clazz, String queryField, List<Object> list) {
-        String sql = SqlUtil.queryIn(tableName, queryField, list);
+    public <T> List<T> queryInStr(String tableName, Class<T> clazz, String queryField, List<String> list) {
+        String sql = SqlUtil.queryInStr(tableName, queryField, list);
         return this.getResult(clazz, sql);
     }
 
+    public <T> List<T> queryInInt(String tableName, Class<T> clazz, String queryField, List<Integer> list) {
+        String sql = SqlUtil.queryInInt(tableName, queryField, list);
+        return this.getResult(clazz, sql);
+    }
 
     public <T> List<T> getResult(Class<T> clazz, String sql) {
         List<T> entities = new ArrayList<>();
