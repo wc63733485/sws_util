@@ -58,10 +58,10 @@ public class BaseDao {
         return jdbcTemplate.queryForObject(sql, Integer.TYPE);
     }
 
-//    public int orCount(Object obj, boolean vague) {
-//        String sql = SqlUtil.OrCount(obj, vague);
-//        return jdbcTemplate.queryForObject(sql, Integer.TYPE);
-//    }
+    public int orCount(Object obj, boolean vague) {
+        String sql = SqlUtil.orCount(obj, vague);
+        return jdbcTemplate.queryForObject(sql, Integer.TYPE);
+    }
 //
 //    public <T> List<T> queryByCondition(Object obj, Class<T> clazz, boolean vague,String sort,int i) {
 //        String sql = SqlUtil.BaseQueryNoPage(obj, vague,sort,i);
@@ -96,13 +96,13 @@ public class BaseDao {
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryInStr(String tableName, Class<T> clazz, String queryField, List<String> list) {
-        String sql = SqlUtil.queryInStr(tableName, queryField, list);
+    public <T> List<T> queryIn(String tableName, Class<T> clazz, String queryField, List<String> list) {
+        String sql = SqlUtil.queryIn(tableName, queryField, list);
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryInInt(String tableName, Class<T> clazz, String queryField, List<Integer> list) {
-        String sql = SqlUtil.queryInInt(tableName, queryField, list);
+    public <T> List<T> queryInByIntArray(String tableName, Class<T> clazz, String queryField, List<Integer> list) {
+        String sql = SqlUtil.queryInByIntArray(tableName, queryField, list);
         return this.getResult(clazz, sql);
     }
 

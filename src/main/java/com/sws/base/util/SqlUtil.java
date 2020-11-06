@@ -108,7 +108,7 @@ public class SqlUtil {
         return String.format(SELECT_ALL_SORT_PAGE_FORMAT, tableName, sort, sort(i), page, limit);
     }
 
-    public static String queryInStr(String tableName, String Field, List<String> array) {
+    public static String queryIn(String tableName, String Field, List<String> array) {
         if (array.size() == 0) {
             return "SELECT * FROM" + tableName + "WHERE 1=2";
         }
@@ -116,7 +116,7 @@ public class SqlUtil {
         return String.format(SELECT_IN, tableName, Field, s);
     }
 
-    public static String queryInInt(String tableName, String Field, List<Integer> array) {
+    public static String queryInByIntArray(String tableName, String Field, List<Integer> array) {
         if (array.size() == 0) {
             return "SELECT * FROM" + tableName + "WHERE 1=2";
         }
@@ -185,7 +185,11 @@ public class SqlUtil {
     public static String orCount(Object obj, boolean vague) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj, vague));
-        return String.format(COUNT_FORMAT, tableName, s);
+        if (s.equals("")) {
+            return String.format(COUNT_ALL_FORMAT, tableName);
+        }else{
+            return String.format(COUNT_FORMAT, tableName, s);
+        }
     }
 
     public static String andCount(Object obj, boolean vague) {
