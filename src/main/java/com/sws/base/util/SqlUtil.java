@@ -110,7 +110,7 @@ public class SqlUtil {
 
     public static String queryIn(String tableName, String Field, List<String> array) {
         if (array.size() == 0) {
-            return "SELECT * FROM" + tableName + "WHERE 1=2";
+            return "SELECT * FROM " + tableName + " WHERE 1=2";
         }
         String s = StringUtil.concatCollection2Str(array);
         return String.format(SELECT_IN, tableName, Field, s);
@@ -118,7 +118,7 @@ public class SqlUtil {
 
     public static String queryInByIntArray(String tableName, String Field, List<Integer> array) {
         if (array.size() == 0) {
-            return "SELECT * FROM" + tableName + "WHERE 1=2";
+            return "SELECT * FROM " + tableName + " WHERE 1=2";
         }
 
         String conn = ",";
