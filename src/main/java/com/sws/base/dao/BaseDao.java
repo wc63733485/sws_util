@@ -106,6 +106,11 @@ public class BaseDao {
         return this.getResult(clazz, sql);
     }
 
+    public <T> List<T> queryInByIntArrayPage(String tableName, Class<T> clazz, String queryField, List<Integer> list, int page, int limit) {
+        String sql = SqlUtil.queryInByIntArrayPage(tableName, queryField, list,(page - 1) * limit, limit);
+        return this.getResult(clazz, sql);
+    }
+
     public <T> List<T> getResult(Class<T> clazz, String sql) {
         List<T> entities = new ArrayList<>();
         for (Map<String, Object> map : jdbcTemplate.queryForList(sql)) {

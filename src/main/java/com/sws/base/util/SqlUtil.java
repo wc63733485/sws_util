@@ -41,6 +41,8 @@ public class SqlUtil {
 
     private static final String SELECT_IN = "SELECT * FROM %s WHERE %s in (%s)";
 
+    private static final String SELECT_PAGE_IN = "SELECT * FROM %s WHERE %s in (%s) LIMIT %s,%s;";
+
     public static String sort(int i) {
         if (i == 1) {
             return ASC;
@@ -132,6 +134,24 @@ public class SqlUtil {
         }
 
         return String.format(SELECT_IN, tableName, Field, stringBuilder.toString());
+    }
+
+    public static String queryInByIntArrayPage(String tableName, String Field, List<Integer> array,int page, int limit) {
+        if (array.size() == 0) {
+            return "SELECT * FROM " + tableName + " WHERE 1=2";
+        }
+
+        String conn = ",";
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Integer str : array) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(conn);
+            }
+            stringBuilder.append(str.toString());
+        }
+
+        return String.format(SELECT_IN, tableName, Field, stringBuilder.toString(), page, limit);
     }
 
     public static String queryNoEqSortPage(Object obj, boolean vague, String sort, int i, int page, int limit) {
