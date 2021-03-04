@@ -62,6 +62,16 @@ public class BaseDao {
         String sql = SqlUtil.orCount(obj, vague);
         return jdbcTemplate.queryForObject(sql, Integer.TYPE);
     }
+
+    public int inCountStr(Object obj,String queryField,  List<String> array) {
+        String sql = SqlUtil.inCountStr(obj,queryField,array);
+        return jdbcTemplate.queryForObject(sql, Integer.TYPE);
+    }
+
+    public int inCountInt(Object obj,String queryField,  List<Integer> array) {
+        String sql = SqlUtil.inCountInt(obj,queryField,array);
+        return jdbcTemplate.queryForObject(sql, Integer.TYPE);
+    }
 //
 //    public <T> List<T> queryByCondition(Object obj, Class<T> clazz, boolean vague,String sort,int i) {
 //        String sql = SqlUtil.BaseQueryNoPage(obj, vague,sort,i);
@@ -96,18 +106,18 @@ public class BaseDao {
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryIn(String tableName, Class<T> clazz, String queryField, List<String> list) {
-        String sql = SqlUtil.queryIn(tableName, queryField, list);
+    public <T> List<T> queryIn(Class<T> clazz, String queryField, List<String> list) {
+        String sql = SqlUtil.queryIn(clazz, queryField, list);
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryInByIntArray(String tableName, Class<T> clazz, String queryField, List<Integer> list) {
-        String sql = SqlUtil.queryInByIntArray(tableName, queryField, list);
+    public <T> List<T> queryInByIntArray(Class<T> clazz, String queryField, List<Integer> list) {
+        String sql = SqlUtil.queryInByIntArray(clazz, queryField, list);
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryInByIntArrayPage(String tableName, Class<T> clazz, String queryField, List<Integer> list, int page, int limit) {
-        String sql = SqlUtil.queryInByIntArrayPage(tableName, queryField, list,(page - 1) * limit, limit);
+    public <T> List<T> queryInByIntArrayPage(Class<T> clazz, String queryField, List<Integer> list, int page, int limit) {
+        String sql = SqlUtil.queryInByIntArrayPage(clazz, queryField, list,(page - 1) * limit, limit);
         return this.getResult(clazz, sql);
     }
 
