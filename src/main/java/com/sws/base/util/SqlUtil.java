@@ -43,7 +43,10 @@ public class SqlUtil {
 
     private static final String SELECT_IN = "SELECT * FROM %s WHERE %s IN (%s)";
 
-    private static final String SELECT_PAGE_IN = "SELECT * FROM %s WHERE %s IN (%s) LIMIT %s,%s;";
+    private static final String SELECT_SORT_PAGE_IN = "SELECT * FROM %s WHERE %s IN (%s) ORDER BY %s %s LIMIT %s,%s;";
+
+    private static final String SELECT_CONDITION = "SELECT * FROM %s WHERE %s and %s IN (%s) ORDER BY %s %s LIMIT %s,%s;";
+    private static final String COUNT_CONDITION = "SELECT COUNT(*) FROM %s WHERE %s and %s IN (%s);";
 
     public static String sort(int i) {
         if (i == 1) {
@@ -60,7 +63,8 @@ public class SqlUtil {
         return String.format(INSERT_FORMAT, tableName, s, v);
     }
 
-    public static String queryByFiled(String tableName, String columnField, Object queryField) {
+    public static String queryByFiled(Object obj, String columnField, Object queryField) {
+        String tableName = TableUtil.getTableName(obj);
         return String.format(SELECT_FORMAT_FIELD, tableName, columnField, queryField);
     }
 
@@ -78,6 +82,54 @@ public class SqlUtil {
         } else {
             return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s, sort, sort(i), page, limit);
         }
+    }
+
+    public static String queryCondition(Object obj, boolean vague,String Field, List<Integer> array, String sort, int i, int page, int limit) {
+        String tableName = TableUtil.getTableName(obj);
+
+        if (array.size() == 0) {
+            return querySortPage(obj,vague,sort,i,page,limit);
+        }
+
+        String conn = ",";
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Integer str : array) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(conn);
+            }
+            stringBuilder.append(str.toString());
+        }
+
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
+        if (s.equals("")) {
+            return queryInByIntArraySortPage(obj,Field,array,sort,i,page,limit);
+        }
+        return String.format(SELECT_CONDITION, tableName,s, Field, stringBuilder.toString(),sort, sort(i),page, limit);
+    }
+
+    public static String countCondition(Object obj, boolean vague,String field, List<Integer> array) {
+        String tableName = TableUtil.getTableName(obj);
+
+        if (array.size() == 0) {
+            return andCount(obj,vague);
+        }
+
+        String conn = ",";
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Integer str : array) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(conn);
+            }
+            stringBuilder.append(str.toString());
+        }
+
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
+        if (s.equals("")) {
+            return inCountInt(obj,field,array);
+        }
+        return String.format(COUNT_CONDITION, tableName, s, field, stringBuilder.toString());
     }
 
     public static String queryPage(Object obj, boolean vague, int page, int limit) {
@@ -145,7 +197,7 @@ public class SqlUtil {
         return String.format(SELECT_IN, tableName, Field, stringBuilder.toString());
     }
 
-    public static String queryInByIntArrayPage(Object obj, String Field, List<Integer> array,int page, int limit) {
+    public static String queryInByIntArraySortPage(Object obj, String Field, List<Integer> array, String sort, int i,int page, int limit) {
         String tableName = TableUtil.getTableName(obj);
         if (array.size() == 0) {
             return "SELECT * FROM " + tableName + " WHERE 1=2";
@@ -161,7 +213,7 @@ public class SqlUtil {
             stringBuilder.append(str.toString());
         }
 
-        return String.format(SELECT_PAGE_IN, tableName, Field, stringBuilder.toString(), page, limit);
+        return String.format(SELECT_SORT_PAGE_IN, tableName, Field, stringBuilder.toString(),sort, sort(i), page, limit);
     }
 
     public static String queryNoEqSortPage(Object obj, boolean vague, String sort, int i, int page, int limit) {
@@ -234,7 +286,7 @@ public class SqlUtil {
     public static String inCountInt(Object obj,String queryField,  List<Integer> array) {
         String tableName = TableUtil.getTableName(obj);
         if (array.size() == 0) {
-            return "0";
+            return "SELECT COUNT(*) FROM " + tableName + " WHERE 1=2";
         }
 
         String conn = ",";

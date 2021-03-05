@@ -17,6 +17,18 @@ public class BaseDao {
     @Autowired
     public JdbcTemplate jdbcTemplate;
 
+    public <T> List<T> queryCondition(Class<T> clazz,Object obj,boolean vague, String queryField, List<Integer> list,String sort, int i, int page, int limit) {
+        String sql = SqlUtil.queryCondition(obj,vague, queryField, list,sort,i,(page - 1) * limit, limit);
+        System.out.println(sql);
+        return this.getResult(clazz, sql);
+    }
+
+    public int countCondition(Object obj,boolean vague, String queryField, List<Integer> list) {
+        String sql = SqlUtil.countCondition(obj,vague, queryField, list);
+        System.out.println(sql);
+        return jdbcTemplate.queryForObject(sql, Integer.TYPE);
+    }
+
     public boolean save(Object obj) {
         String sql = SqlUtil.insert(obj);
         return jdbcTemplate.update(sql) > 0;
@@ -49,7 +61,6 @@ public class BaseDao {
 
     public int count(Object obj, boolean vague) {
         String sql = SqlUtil.andCount(obj, vague);
-//        System.out.println(sql);
         return jdbcTemplate.queryForObject(sql, Integer.TYPE);
     }
     public <T> int countAll(Class<T> clazz) {
@@ -116,11 +127,6 @@ public class BaseDao {
         return this.getResult(clazz, sql);
     }
 
-    public <T> List<T> queryInByIntArrayPage(Class<T> clazz, String queryField, List<Integer> list, int page, int limit) {
-        String sql = SqlUtil.queryInByIntArrayPage(clazz, queryField, list,(page - 1) * limit, limit);
-        return this.getResult(clazz, sql);
-    }
-
     public <T> List<T> getResult(Class<T> clazz, String sql) {
         List<T> entities = new ArrayList<>();
         for (Map<String, Object> map : jdbcTemplate.queryForList(sql)) {
@@ -145,9 +151,7 @@ public class BaseDao {
     public <T> T queryOne(Object obj, Class<T> clazz) {
         String sql = SqlUtil.queryPage(obj, false, 0, 1);
         List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
-//        System.out.println(sql);
         if (maps.size() == 1) {
-//            System.out.println(maps.get(0).toString());
             return JavaBeanUtil.mapToObject(maps.get(0), clazz);
         }
         return null;
@@ -161,4 +165,5 @@ public class BaseDao {
         }
         return null;
     }
+
 }
