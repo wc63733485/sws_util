@@ -17,17 +17,15 @@ public class SqlUtil {
 
     private static final String SELECT_SORT_FORMAT = "SELECT * FROM %s WHERE %s ORDER BY %s %s;";
 
-    private static final String SELECT_PAGE_FORMAT = "SELECT * FROM %s WHERE %s LIMIT %s,%s;";
-
     private static final String SELECT_FORMAT = "SELECT * FROM %s WHERE %s;";
+
+    private static final String SELECT_ONE_FORMAT = "SELECT * FROM %s WHERE %s LIMIT 0,1;";
 
     private static final String SELECT_FORMAT_FIELD = "SELECT * FROM %s WHERE %s = %s;";
 
     private static final String SELECT_ALL_SORT_PAGE_FORMAT = "SELECT * FROM %s ORDER BY %s %s LIMIT %s,%s;";
 
     private static final String SELECT_ALL_SORT_FORMAT = "SELECT * FROM %s ORDER BY %s %s;";
-
-    private static final String SELECT_ALL_PAGE_FORMAT = "SELECT * FROM %s LIMIT %s,%s;";
 
     private static final String SELECT_ALL_FORMAT = "SELECT * FROM %s;";
 
@@ -45,16 +43,15 @@ public class SqlUtil {
 
     private static final String SELECT_SORT_PAGE_IN = "SELECT * FROM %s WHERE %s IN (%s) ORDER BY %s %s LIMIT %s,%s;";
 
-    private static final String SELECT_CONDITION = "SELECT * FROM %s WHERE %s and %s IN (%s) ORDER BY %s %s LIMIT %s,%s;";
-    private static final String COUNT_CONDITION = "SELECT COUNT(*) FROM %s WHERE %s and %s IN (%s);";
+    private static final String SELECT_SORT_IN = "SELECT * FROM %s WHERE %s IN (%s) ORDER BY %s %s;";
 
-    public static String sort(int i) {
-        if (i == 1) {
-            return ASC;
-        } else {
-            return DESC;
-        }
-    }
+    private static final String SELECT_CONDITION_SORT_PAGE = "SELECT * FROM %s WHERE %s and %s IN (%s) ORDER BY %s %s LIMIT %s,%s;";
+
+    private static final String SELECT_CONDITION_SORT = "SELECT * FROM %s WHERE %s and %s IN (%s) ORDER BY %s %s;";
+
+    private static final String SELECT_CONDITION = "SELECT * FROM %s WHERE %s and %s IN (%s);";
+
+    private static final String COUNT_CONDITION = "SELECT COUNT(*) FROM %s WHERE %s and %s IN (%s);";
 
     public static String insert(Object obj) {
         String tableName = TableUtil.getTableName(obj);
@@ -68,10 +65,16 @@ public class SqlUtil {
         return String.format(SELECT_FORMAT_FIELD, tableName, columnField, queryField);
     }
 
-    public static String query(Object obj) {
+    public static String query(Object obj,boolean vague) {
         String tableName = TableUtil.getTableName(obj);
-        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, false));
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
         return String.format(SELECT_FORMAT, tableName, s);
+    }
+
+    public static String querySort(Object obj,boolean vague, String sort, int i) {
+        String tableName = TableUtil.getTableName(obj);
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
+        return String.format(SELECT_SORT_FORMAT, s, tableName, sort, sort(i));
     }
 
     public static String querySortPage(Object obj, boolean vague, String sort, int i, int page, int limit) {
@@ -84,64 +87,100 @@ public class SqlUtil {
         }
     }
 
-    public static String queryCondition(Object obj, boolean vague,String Field, List<Integer> array, String sort, int i, int page, int limit) {
+//    public static String queryInByString(Object obj, String Field, List<String> array) {
+//        String tableName = TableUtil.getTableName(obj);
+//        if (array.size() == 0) {
+//            return "SELECT * FROM " + tableName + " WHERE 1=2";
+//        }
+//        String s = StringUtil.concatCollection2Str(array);
+//        return String.format(SELECT_IN, tableName, Field, s);
+//    }
+
+    public static String queryIn(Object obj, String Field, List<Integer> array) {
+        String tableName = TableUtil.getTableName(obj);
+        if (array.size() == 0) {
+            return "SELECT * FROM " + tableName + " WHERE 1=2";
+        }
+
+        String string = listToString(array);
+
+        return String.format(SELECT_IN, tableName, Field, string);
+    }
+
+    public static String queryInBySort(Object obj, String Field, List<Integer> array, String sort, int i) {
+        String tableName = TableUtil.getTableName(obj);
+        if (array.size() == 0) {
+            return "SELECT * FROM " + tableName + " WHERE 1=2";
+        }
+
+        String string = listToString(array);
+
+        return String.format(SELECT_SORT_IN, tableName, Field, string,sort, sort(i));
+    }
+
+    public static String queryInBySortPage(Object obj, String Field, List<Integer> array, String sort, int i,int page, int limit) {
+        String tableName = TableUtil.getTableName(obj);
+        if (array.size() == 0) {
+            return "SELECT * FROM " + tableName + " WHERE 1=2";
+        }
+
+        String string = listToString(array);
+
+        return String.format(SELECT_SORT_PAGE_IN, tableName, Field, string,sort, sort(i), page, limit);
+    }
+
+    public static String queryInAndCondition(Object obj, boolean vague,String Field, List<Integer> array) {
+        String tableName = TableUtil.getTableName(obj);
+
+        if (array.size() == 0) {
+            return query(obj,vague);
+        }
+
+        String string = listToString(array);
+
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
+        if (s.equals("")) {
+            return queryIn(obj,Field,array);
+        }
+        return String.format(SELECT_CONDITION, tableName,s, Field, string);
+    }
+
+    public static String queryInAndConditionSort(Object obj, boolean vague,String Field, List<Integer> array, String sort, int i) {
+        String tableName = TableUtil.getTableName(obj);
+
+        if (array.size() == 0) {
+            return querySort(obj,vague,sort,i);
+        }
+
+        String string = listToString(array);
+
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
+        if (s.equals("")) {
+            return queryInBySort(obj,Field,array,sort,i);
+        }
+        return String.format(SELECT_CONDITION_SORT_PAGE, tableName,s, Field, string,sort, sort(i));
+    }
+
+    public static String queryInAndConditionSortPage(Object obj, boolean vague,String Field, List<Integer> array, String sort, int i, int page, int limit) {
         String tableName = TableUtil.getTableName(obj);
 
         if (array.size() == 0) {
             return querySortPage(obj,vague,sort,i,page,limit);
         }
 
-        String conn = ",";
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Integer str : array) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(conn);
-            }
-            stringBuilder.append(str.toString());
-        }
+        String string = listToString(array);
 
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
         if (s.equals("")) {
-            return queryInByIntArraySortPage(obj,Field,array,sort,i,page,limit);
+            return queryInBySortPage(obj,Field,array,sort,i,page,limit);
         }
-        return String.format(SELECT_CONDITION, tableName,s, Field, stringBuilder.toString(),sort, sort(i),page, limit);
+        return String.format(SELECT_CONDITION_SORT_PAGE, tableName,s, Field, string,sort, sort(i),page, limit);
     }
 
-    public static String countCondition(Object obj, boolean vague,String field, List<Integer> array) {
+    public static String queryOne(Object obj) {
         String tableName = TableUtil.getTableName(obj);
-
-        if (array.size() == 0) {
-            return andCount(obj,vague);
-        }
-
-        String conn = ",";
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Integer str : array) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(conn);
-            }
-            stringBuilder.append(str.toString());
-        }
-
-        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
-        if (s.equals("")) {
-            return inCountInt(obj,field,array);
-        }
-        return String.format(COUNT_CONDITION, tableName, s, field, stringBuilder.toString());
-    }
-
-    public static String queryPage(Object obj, boolean vague, int page, int limit) {
-        String tableName = TableUtil.getTableName(obj);
-        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
-        return String.format(SELECT_PAGE_FORMAT, tableName, s, page, limit);
-    }
-
-    public static String querySort(Object obj, String sort, int i, boolean vague) {
-        String tableName = TableUtil.getTableName(obj);
-        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
-        return String.format(SELECT_SORT_FORMAT, s, tableName, sort, sort(i));
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, false));
+        return String.format(SELECT_ONE_FORMAT, tableName,s);
     }
 
     public static String queryById(Object obj, Integer id) {
@@ -154,11 +193,6 @@ public class SqlUtil {
         return String.format(SELECT_ALL_FORMAT, tableName);
     }
 
-    public static String queryAllPage(Object obj, int page, int limit) {
-        String tableName = TableUtil.getTableName(obj);
-        return String.format(SELECT_ALL_PAGE_FORMAT, tableName, page, limit);
-    }
-
     public static String queryAllSort(Object obj, String sort, int i) {
         String tableName = TableUtil.getTableName(obj);
         return String.format(SELECT_ALL_SORT_FORMAT, tableName, sort, sort(i));
@@ -169,63 +203,10 @@ public class SqlUtil {
         return String.format(SELECT_ALL_SORT_PAGE_FORMAT, tableName, sort, sort(i), page, limit);
     }
 
-    public static String queryIn(Object obj, String Field, List<String> array) {
-        String tableName = TableUtil.getTableName(obj);
-        if (array.size() == 0) {
-            return "SELECT * FROM " + tableName + " WHERE 1=2";
-        }
-        String s = StringUtil.concatCollection2Str(array);
-        return String.format(SELECT_IN, tableName, Field, s);
-    }
-
-    public static String queryInByIntArray(Object obj, String Field, List<Integer> array) {
-        String tableName = TableUtil.getTableName(obj);
-        if (array.size() == 0) {
-            return "SELECT * FROM " + tableName + " WHERE 1=2";
-        }
-
-        String conn = ",";
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Integer str : array) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(conn);
-            }
-            stringBuilder.append(str.toString());
-        }
-
-        return String.format(SELECT_IN, tableName, Field, stringBuilder.toString());
-    }
-
-    public static String queryInByIntArraySortPage(Object obj, String Field, List<Integer> array, String sort, int i,int page, int limit) {
-        String tableName = TableUtil.getTableName(obj);
-        if (array.size() == 0) {
-            return "SELECT * FROM " + tableName + " WHERE 1=2";
-        }
-
-        String conn = ",";
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Integer str : array) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(conn);
-            }
-            stringBuilder.append(str.toString());
-        }
-
-        return String.format(SELECT_SORT_PAGE_IN, tableName, Field, stringBuilder.toString(),sort, sort(i), page, limit);
-    }
-
     public static String queryNoEqSortPage(Object obj, boolean vague, String sort, int i, int page, int limit) {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj, vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s, sort, sort(i), page, limit);
-    }
-
-    public static String queryNoEqualPage(Object obj, boolean vague, int page, int limit) {
-        String tableName = TableUtil.getTableName(obj);
-        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledStringNoEqual(obj, vague));
-        return String.format(SELECT_PAGE_FORMAT, tableName, s, page, limit);
     }
 
     public static String queryNoEqualSort(Object obj, boolean vague, String sort, int i) {
@@ -244,12 +225,6 @@ public class SqlUtil {
         String tableName = TableUtil.getTableName(obj);
         String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj, vague));
         return String.format(SELECT_SORT_PAGE_FORMAT, tableName, s, sort, sort(i), page, limit);
-    }
-
-    public static String queryOrPage(Object obj, boolean vague, int page, int limit) {
-        String tableName = TableUtil.getTableName(obj);
-        String s = StringUtil.concatCollection2StrOR(FieldUtil.getNotNullFiledString(obj, vague));
-        return String.format(SELECT_PAGE_FORMAT, tableName, s, page, limit);
     }
 
     public static String queryOrSort(Object obj, boolean vague, String sort, int i) {
@@ -274,7 +249,7 @@ public class SqlUtil {
         }
     }
 
-    public static String inCountStr(Object obj,String queryField, List<String> array) {
+    public static String inCountByString(Object obj,String queryField, List<String> array) {
         String tableName = TableUtil.getTableName(obj);
         if (array.size() == 0) {
             return "SELECT COUNT(*) FROM " + tableName + " WHERE 1=2";
@@ -283,23 +258,30 @@ public class SqlUtil {
         return String.format(COUNT_IN_FORMAT, tableName, queryField, s);
     }
 
-    public static String inCountInt(Object obj,String queryField,  List<Integer> array) {
+    public static String inCountByInt(Object obj,String queryField,  List<Integer> array) {
         String tableName = TableUtil.getTableName(obj);
         if (array.size() == 0) {
             return "SELECT COUNT(*) FROM " + tableName + " WHERE 1=2";
         }
 
-        String conn = ",";
-        StringBuilder stringBuilder = new StringBuilder();
+        String string = listToString(array);
 
-        for (Integer str : array) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append(conn);
-            }
-            stringBuilder.append(str.toString());
+        return String.format(COUNT_IN_FORMAT, tableName, queryField, string);
+    }
+
+    public static String countInAndCondition(Object obj, boolean vague,String field, List<Integer> array) {
+        String tableName = TableUtil.getTableName(obj);
+
+        if (array.size() == 0) {
+            return andCount(obj,vague);
         }
 
-        return String.format(COUNT_IN_FORMAT, tableName, queryField, stringBuilder.toString());
+        String string = listToString(array);
+        String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
+        if (s.equals("")) {
+            return inCountByInt(obj,field,array);
+        }
+        return String.format(COUNT_CONDITION, tableName, s, field, string);
     }
 
     public static String andCount(Object obj, boolean vague) {
@@ -330,4 +312,23 @@ public class SqlUtil {
         return String.format(UPDATE_FORMAT, tableName, s2, s1);
     }
 
+    public static String listToString(List<Integer> array){
+        String conn = ",";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Integer str : array) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(conn);
+            }
+            stringBuilder.append(str.toString());
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String sort(int i) {
+        if (i == 1) {
+            return ASC;
+        } else {
+            return DESC;
+        }
+    }
 }

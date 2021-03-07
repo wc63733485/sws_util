@@ -92,7 +92,7 @@ public class JavaBeanUtil {
     }
 
     //将map通过反射转化为实体
-    public static   Object MapToModel(Map<String,Object> map,Object o) throws Exception{
+    public static Object MapToModel(Map<String,Object> map,Object o) throws Exception{
         if (!map.isEmpty()) {
             for (String k : map.keySet()) {
                 Object v =null;

@@ -2,6 +2,7 @@ package com.sws.base.Entity;
 
 import com.sws.base.annotations.Column;
 import com.sws.base.annotations.Entity;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class UserEntity {
     //用户ID
     @Column("user_id")
     private Integer userId;
+    //是否超级管理员
+    private String isAdmin;
     //部门ID
     @Column("dept_id")
     private Integer deptId;
@@ -36,7 +39,7 @@ public class UserEntity {
     //盐加密
     private String salt;
     //帐号状态（0正常 1停用）
-    private Integer status;
+    private String status;
     //删除标志（0代表存在 2代表删除）
     @Column("del_flag")
     private Integer delFlag;
@@ -59,7 +62,7 @@ public class UserEntity {
     @Column("update_time")
     private String updateTime;
     //更新时间
-    private List<Integer> projectIds;
+    private String projectIds;
     //更新时间
     private String projectNames;
     //备注
@@ -71,6 +74,14 @@ public class UserEntity {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(String isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public Integer getDeptId() {
@@ -153,11 +164,11 @@ public class UserEntity {
         this.salt = salt;
     }
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -217,11 +228,11 @@ public class UserEntity {
         this.updateTime = updateTime;
     }
 
-    public List<Integer> getProjectIds() {
+    public String getProjectIds() {
         return projectIds;
     }
 
-    public void setProjectIds(List<Integer> projectIds) {
+    public void setProjectIds(String projectIds) {
         this.projectIds = projectIds;
     }
 
