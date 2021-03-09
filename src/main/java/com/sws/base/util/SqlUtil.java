@@ -183,23 +183,19 @@ public class SqlUtil {
         return String.format(SELECT_ONE_FORMAT, tableName,s);
     }
 
-    public static String queryById(Object obj, Integer id) {
-        String tableName = TableUtil.getTableName(obj);
+    public static String queryById(String tableName, Integer id) {
         return String.format(SELECT_ID_FORMAT, tableName, id);
     }
 
-    public static String queryAll(Object obj) {
-        String tableName = TableUtil.getTableName(obj);
+    public static String queryAll(String tableName) {
         return String.format(SELECT_ALL_FORMAT, tableName);
     }
 
-    public static String queryAllSort(Object obj, String sort, int i) {
-        String tableName = TableUtil.getTableName(obj);
+    public static String queryAllSort(String tableName, String sort, int i) {
         return String.format(SELECT_ALL_SORT_FORMAT, tableName, sort, sort(i));
     }
 
-    public static String queryAllSortPage(Object obj, String sort, int i, int page, int limit) {
-        String tableName = TableUtil.getTableName(obj);
+    public static String queryAllSortPage(String tableName, String sort, int i, int page, int limit) {
         return String.format(SELECT_ALL_SORT_PAGE_FORMAT, tableName, sort, sort(i), page, limit);
     }
 
@@ -294,8 +290,7 @@ public class SqlUtil {
         }
     }
 
-    public static String countAll(Object obj) {
-        String tableName = TableUtil.getTableName(obj);
+    public static String countAll(String tableName) {
         return String.format(COUNT_ALL_FORMAT, tableName);
     }
 

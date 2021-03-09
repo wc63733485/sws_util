@@ -2,6 +2,7 @@ package com.sws.base.Entity;
 
 import com.sws.base.annotations.Column;
 import com.sws.base.annotations.Entity;
+import com.sws.base.annotations.IgnoreColumn;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 
 import java.util.List;
@@ -12,8 +13,9 @@ public class UserEntity {
     //用户ID
     @Column("user_id")
     private Integer userId;
-    //是否超级管理员
-    private String isAdmin;
+
+    @IgnoreColumn
+    private Integer roleId;
     //部门ID
     @Column("dept_id")
     private Integer deptId;
@@ -62,11 +64,21 @@ public class UserEntity {
     @Column("update_time")
     private String updateTime;
     //更新时间
+    @IgnoreColumn
     private String projectIds;
     //更新时间
+    @IgnoreColumn
     private String projectNames;
     //备注
     private String remark;
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -74,14 +86,6 @@ public class UserEntity {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public String getIsAdmin() {
-        return isAdmin;
-    }
-
-    public void setIsAdmin(String isAdmin) {
-        this.isAdmin = isAdmin;
     }
 
     public Integer getDeptId() {
