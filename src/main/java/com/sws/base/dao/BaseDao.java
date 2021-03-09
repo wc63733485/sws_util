@@ -127,7 +127,8 @@ public class BaseDao {
 //    }
 
     public <T> List<T> queryIn(Class<T> clazz, String queryField, List<Integer> list) {
-        String sql = SqlUtil.queryIn(clazz, queryField, list);
+        String tn = clazz.getAnnotation(Entity.class).value();
+        String sql = SqlUtil.queryIn(tn, queryField, list);
         return this.getResult(clazz, sql);
     }
 

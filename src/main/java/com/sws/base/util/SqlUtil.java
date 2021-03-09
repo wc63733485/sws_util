@@ -96,8 +96,7 @@ public class SqlUtil {
 //        return String.format(SELECT_IN, tableName, Field, s);
 //    }
 
-    public static String queryIn(Object obj, String Field, List<Integer> array) {
-        String tableName = TableUtil.getTableName(obj);
+    public static String queryIn(String tableName, String Field, List<Integer> array) {
         if (array.size() == 0) {
             return "SELECT * FROM " + tableName + " WHERE 1=2";
         }
@@ -140,7 +139,7 @@ public class SqlUtil {
 
         String s = StringUtil.concatCollection2StrAND(FieldUtil.getNotNullFiledString(obj, vague));
         if (s.equals("")) {
-            return queryIn(obj,Field,array);
+            return queryIn(tableName,Field,array);
         }
         return String.format(SELECT_CONDITION, tableName,s, Field, string);
     }
