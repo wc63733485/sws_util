@@ -132,6 +132,7 @@ public class BaseDao {
         return this.getResult(clazz, sql);
     }
 
+
     public <T> List<T> getResult(Class<T> clazz, String sql) {
         List<T> entities = new ArrayList<>();
         for (Map<String, Object> map : jdbcTemplate.queryForList(sql)) {
@@ -171,4 +172,12 @@ public class BaseDao {
         return null;
     }
 
+    public <T> List<T> queryOneAndIn(Object obj, Class<T> clazz, String sort, int i, String queryField, List<Integer> list) {
+        String sql = SqlUtil.queryInAndConditionSortPage(obj, false,queryField,list, sort, i, 0, 1);
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
+        if (maps.size() == 1) {
+            return JavaBeanUtil.mapToObject(maps.get(0), clazz);
+        }
+        return null;
+    }
 }
